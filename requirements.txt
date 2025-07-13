@@ -1,0 +1,5 @@
+requests
+feedparser
+redis
+python-dotenv
+pillow

@@ -1,0 +1,50 @@
+name: ClipKitAi nightly run
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * *"   # 05:00\u00a0UTC daily
+
+concurrency:
+  group: agent-run
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      redis:
+        image: redis
+        ports: ["6379:6379"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Scrape keywords
+        run: python scripts/scrape_keywords.py
+
+      - name: Generate images
+        run: python scripts/generate_images.py
+
+      - name: Bundle & upload
+        run: python scripts/bundle_and_upload.py
+
+      - name: Notify Slack on failure
+        if: failure()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d "{\"text\":\"ClipKitAi run failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            $SLACK_WEBHOOK_URL
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

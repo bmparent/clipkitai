@@ -3,11 +3,18 @@ name: ClipKitAi nightly run
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 5 * * *"   # 05:00\u00a0UTC daily
+    - cron: "0 5 * * *"   # 05:00 UTC daily
 
 concurrency:
   group: agent-run
   cancel-in-progress: true
+
+env:
+  HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+  PAYHIP_TOKEN:      ${{ secrets.PAYHIP_TOKEN }}
+  REDIS_URL:         ${{ secrets.REDIS_URL || 'redis://localhost:6379' }}
+  REDIS_REST_TOKEN:  ${{ secrets.REDIS_REST_TOKEN }}
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 jobs:
   run:
@@ -46,5 +53,3 @@ jobs:
           curl -X POST -H "Content-Type: application/json" \
             -d "{\"text\":\"ClipKitAi run failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
             $SLACK_WEBHOOK_URL
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

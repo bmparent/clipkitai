@@ -15,6 +15,8 @@ env:
   REDIS_URL:         ${{ secrets.REDIS_URL || 'redis://localhost:6379' }}
   REDIS_REST_TOKEN:  ${{ secrets.REDIS_REST_TOKEN }}
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  PIN_KEY:       ${{ secrets.PIN_KEY }}
+  PIN_BOARD_ID:  ${{ secrets.PIN_BOARD_ID }}
 
 jobs:
   run:
@@ -46,6 +48,10 @@ jobs:
 
       - name: Bundle & upload
         run: python scripts/bundle_and_upload.py
+
+      - name: Pin newest pack on Pinterest
+        run: python scripts/pin_latest.py
+        if: env.PIN_KEY != ''
 
       - name: Notify Slack on failure
         if: failure()

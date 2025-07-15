@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
-HF_ENDPOINT = "https://api-inference.huggingface.co/models/stabilityai/sdxl-base"
+MODEL_ID = "stabilityai/stable-diffusion-xl-base-1.0"
+API_URL = f"https://api-inference.huggingface.co/models/{MODEL_ID}"
 HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
@@ -25,7 +26,7 @@ def slugify(text: str) -> str:
     return "".join(c if c.isalnum() else "_" for c in text).lower()[:40]
 
 def generate_image(prompt: str) -> bytes:
-    resp = requests.post(HF_ENDPOINT, headers=HEADERS, json={"inputs": prompt})
+    resp = requests.post(API_URL, headers=HEADERS, json={"inputs": prompt})
     resp.raise_for_status()
     return resp.content
 

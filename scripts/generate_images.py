@@ -6,8 +6,9 @@ import redis
 from dotenv import load_dotenv
 
 load_dotenv()
+from config.env import HUGGINGFACE_API_TOKEN
 
-HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+HF_TOKEN = HUGGINGFACE_API_TOKEN
 MODEL_ID = "stabilityai/stable-diffusion-xl-base-1.0"
 API_URL = f"https://api-inference.huggingface.co/models/{MODEL_ID}"
 HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}

@@ -1,0 +1,17 @@
+name: CI
+on:
+  push:
+    branches: [ main, feature/ops-webhook-test-and-secrets ]
+  pull_request:
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure key files exist
+        run: |
+          test -f scripts/test_webhook.sh
+          test -f .env.example
+          test -f Makefile
+      - name: Make lint
+        run: make lint

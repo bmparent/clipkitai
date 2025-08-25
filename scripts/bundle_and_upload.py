@@ -3,8 +3,9 @@ import os, pathlib, zipfile, requests, time
 from dotenv import load_dotenv
 
 load_dotenv()
+from config.env import PAYHIP_API_KEY
 
-PAYHIP_TOKEN = os.getenv("PAYHIP_TOKEN")
+PAYHIP_TOKEN = PAYHIP_API_KEY
 PAYHIP_API = "https://payhip.com/api/v2/products"
 HEADERS = {"Authorization": f"Bearer {PAYHIP_TOKEN}"}
 
